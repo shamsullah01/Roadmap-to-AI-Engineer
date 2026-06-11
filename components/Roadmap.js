@@ -122,9 +122,21 @@ export default function Roadmap({ completed, toggleTopic, isUnlocked, pct }) {
                         <div className="lesson">
                           <div className="lesson-cmd mono">$ cover {topic.id}</div>
                           <ul className="lesson-list">
-                            {(topic.learn || []).map((item, i) => (
-                              <li key={i}>{item}</li>
-                            ))}
+                            {(topic.learn || []).map((item, i) =>
+                              typeof item === "string" ? (
+                                <li key={i}>{item}</li>
+                              ) : (
+                                <li key={i}>
+                                  <span className="lesson-pt">{item.t}</span>
+                                  {item.d && <span className="lesson-d">{item.d}</span>}
+                                  {item.code && (
+                                    <pre className="lesson-code mono">
+                                      <code>{item.code}</code>
+                                    </pre>
+                                  )}
+                                </li>
+                              )
+                            )}
                           </ul>
                           <div className="lesson-foot">
                             {on ? (

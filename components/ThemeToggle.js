@@ -6,7 +6,7 @@ export default function ThemeToggle() {
   const [theme, setTheme] = useState(null);
 
   useEffect(() => {
-    setTheme(document.documentElement.dataset.theme || "light");
+    setTheme(document.documentElement.dataset.theme || "dark");
   }, []);
 
   const flip = () => {

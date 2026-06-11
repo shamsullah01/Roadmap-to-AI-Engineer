@@ -11,7 +11,16 @@ function Check() {
   );
 }
 
-export default function Roadmap({ completed, toggleTopic, pct }) {
+function Lock() {
+  return (
+    <svg width="10" height="10" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+      <rect x="2.5" y="5.5" width="7" height="5" rx="1.2" stroke="currentColor" strokeWidth="1.3" />
+      <path d="M4 5.5V4a2 2 0 0 1 4 0v1.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export default function Roadmap({ completed, toggleTopic, isUnlocked, pct }) {
   const [open, setOpen] = useState({ foundations: true });
 
   const toggleStage = (id) => setOpen((o) => ({ ...o, [id]: !o[id] }));
@@ -50,28 +59,34 @@ export default function Roadmap({ completed, toggleTopic, pct }) {
                 {stage.topics.map((topic) => {
                   const key = `${stage.id}.${topic.id}`;
                   const on = !!completed[key];
+                  const locked = !on && !isUnlocked(key);
                   return (
                     <div
                       key={key}
-                      className={`topic${on ? " done" : ""}`}
-                      onClick={() => toggleTopic(key)}
+                      className={`topic${on ? " done" : ""}${locked ? " locked" : ""}`}
+                      onClick={() => !locked && toggleTopic(key)}
                       onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
+                        if (!locked && (e.key === "Enter" || e.key === " ")) {
                           e.preventDefault();
                           toggleTopic(key);
                         }
                       }}
                       role="checkbox"
                       aria-checked={on}
-                      tabIndex={0}
+                      aria-disabled={locked}
+                      title={locked ? "Complete the topic above to unlock this one" : undefined}
+                      tabIndex={locked ? -1 : 0}
                     >
                       <span className={`checkbox${on ? " on" : ""}`}>
-                        <Check />
+                        {locked ? <Lock /> : <Check />}
                       </span>
-                      <span>
+                      <span className="topic-body">
                         <span className="topic-name">{topic.name}</span>
                         <br />
                         <span className="topic-why">{topic.why}</span>
+                      </span>
+                      <span className={`topic-status${!on && !locked ? " next" : ""}`}>
+                        {on ? "done" : locked ? "locked" : "start"}
                       </span>
                     </div>
                   );

@@ -22,29 +22,45 @@ export default function App() {
       </header>
 
       <section className="shell hero">
-        <p className="mono eyebrow">a roadmap · 6 stages · {p.totalTopics} topics · 1 checkpoint quiz</p>
-        <h1>
-          Learn to be an <em>AI engineer.</em> Keep score while you do it.
-        </h1>
-        <p>
-          A curriculum that runs from Python basics to production LLM systems, in the order
-          working engineers actually learn it. Check off topics as you study, then run the
-          checkpoint quiz to prove it — your progress is saved on this device.
-        </p>
-        <div className="hero-stats">
-          <div className="stat">
-            <span className="mono">topics complete</span>
-            <strong>
-              {p.topicsDone}/{p.totalTopics}
-            </strong>
+        <div className="term-window">
+          <div className="term-bar">
+            <span className="dots" aria-hidden="true">
+              <i />
+              <i />
+              <i />
+            </span>
+            <span className="term-title">~/pathweights — bash</span>
+            <span className="term-meta mono">6 stages · {p.totalTopics} topics · 1 quiz</span>
           </div>
-          <div className="stat">
-            <span className="mono">total xp</span>
-            <strong className="gold">{p.xp}</strong>
-          </div>
-          <div className="stat">
-            <span className="mono">current level</span>
-            <strong>{p.level.name}</strong>
+          <div className="term-body">
+            <p className="mono eyebrow">./pathweights --become ai-engineer</p>
+            <h1>
+              Learn to be an <em>AI engineer.</em> Keep score while you do it.
+              <span className="cursor" aria-hidden="true">
+                ▋
+              </span>
+            </h1>
+            <p className="hero-lede">
+              A curriculum that runs from Python basics to production LLM systems, in the order
+              working engineers actually learn it. Check off topics as you study, then run the
+              checkpoint quiz to prove it — your progress is saved on this device.
+            </p>
+            <div className="hero-stats">
+              <div className="stat">
+                <span className="mono">topics_complete</span>
+                <strong>
+                  {p.topicsDone}/{p.totalTopics}
+                </strong>
+              </div>
+              <div className="stat">
+                <span className="mono">total_xp</span>
+                <strong className="gold">{p.xp}</strong>
+              </div>
+              <div className="stat">
+                <span className="mono">current_level</span>
+                <strong>{p.level.name}</strong>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -86,7 +102,7 @@ export default function App() {
           </button>
         </aside>
 
-        <Roadmap completed={p.completed} toggleTopic={p.toggleTopic} pct={p.pct} />
+        <Roadmap completed={p.completed} toggleTopic={p.toggleTopic} isUnlocked={p.isUnlocked} pct={p.pct} />
       </main>
 
       <section className="shell checkpoint" id="checkpoint">

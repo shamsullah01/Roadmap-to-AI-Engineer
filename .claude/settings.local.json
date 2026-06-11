@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "PowerShell(npm run *)"
+      "PowerShell(npm run *)",
+      "PowerShell($chrome=\"C:\\\\Program Files\\\\Google\\\\Chrome\\\\Application\\\\chrome.exe\"; & $chrome --headless=new --disable-gpu --screenshot=\"$env:TEMP\\\\shot1600.png\" --window-size=1600,900 --virtual-time-budget=4000 \"http://localhost:3001\"; Start-Sleep -Seconds 2; \"done\")",
+      "PowerShell(Add-Type -AssemblyName System.Drawing; $src=[System.Drawing.Image]::FromFile\\(\"$env:TEMP\\\\dark_quiz.png\"\\); $h=$src.Height; $w=$src.Width; $cropH=[Math]::Min\\(950,$h\\); $crop=New-Object System.Drawing.Bitmap\\($w,$cropH\\); $g=[System.Drawing.Graphics]::FromImage\\($crop\\); $g.DrawImage\\($src,\\(New-Object System.Drawing.Rectangle\\(0,0,$w,$cropH\\)\\),\\(New-Object System.Drawing.Rectangle\\(0,$h-$cropH,$w,$cropH\\)\\),[System.Drawing.GraphicsUnit]::Pixel\\); $crop.Save\\(\"$env:TEMP\\\\dark_quiz_crop.png\"\\); $g.Dispose\\(\\);$crop.Dispose\\(\\);$src.Dispose\\(\\); \"cropped $w x $cropH from total height $h\")"
     ]
   }
 }

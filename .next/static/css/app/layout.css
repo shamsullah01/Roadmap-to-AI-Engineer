@@ -907,16 +907,27 @@ a:focus-visible {
 }
 
 .topic {
-  display: flex;
-  gap: 13px;
-  align-items: flex-start;
-  padding: 12px 0;
   border-bottom: 1px solid var(--line);
-  cursor: pointer;
 }
 
 .topic:last-of-type {
   border-bottom: none;
+}
+
+.topic-head {
+  display: flex;
+  gap: 13px;
+  align-items: flex-start;
+  padding: 12px 0;
+  cursor: pointer;
+}
+
+.topic.open .topic-head {
+  padding-bottom: 6px;
+}
+
+.topic.locked .topic-head {
+  cursor: not-allowed;
 }
 
 .checkbox {
@@ -932,7 +943,7 @@ a:focus-visible {
   background: var(--bg);
 }
 
-.topic:hover .checkbox {
+.topic:not(.locked) .topic-head:hover .checkbox {
   border-color: var(--cobalt);
 }
 
@@ -1008,7 +1019,7 @@ a:focus-visible {
   opacity: 0.5;
 }
 
-.topic.locked:hover .checkbox {
+.topic.locked .topic-head:hover .checkbox {
   border-color: var(--line-strong);
 }
 
@@ -1023,6 +1034,71 @@ a:focus-visible {
 
 .topic.locked .topic-status {
   color: var(--ink-faint);
+}
+
+/* ---------- topic lesson panel ---------- */
+
+.lesson {
+  margin: 0 0 14px 9px;
+  padding: 12px 0 4px 22px;
+  border-left: 2px solid var(--line-strong);
+}
+
+.lesson-cmd {
+  color: var(--cobalt);
+  margin-bottom: 12px;
+}
+
+.lesson-cmd::before {
+  content: "› ";
+  color: var(--ink-faint);
+}
+
+.lesson-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.lesson-list li {
+  position: relative;
+  padding-left: 20px;
+  color: var(--ink-soft);
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+
+.lesson-list li::before {
+  content: "▸";
+  position: absolute;
+  left: 2px;
+  color: var(--cobalt);
+}
+
+.lesson-foot {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.lesson-done {
+  color: var(--green);
+  text-shadow: var(--glow);
+}
+
+.lesson-reset {
+  color: var(--ink-faint);
+  font-size: 12.5px;
+  border-bottom: 1px dashed var(--line-strong);
+  padding-bottom: 1px;
+  transition: color 0.15s;
+}
+
+.lesson-reset:hover {
+  color: var(--red);
 }
 
 /* ---------- checkpoint / quiz ---------- */

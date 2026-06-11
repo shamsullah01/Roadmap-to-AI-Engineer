@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { STAGES } from "../lib/data";
+import { STAGES, TOPIC_KEYS } from "../lib/data";
 
 function Check() {
   return (
     <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-      <path d="M2 6.5L4.8 9.2L10 3.5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M2 6.5L4.8 9.2L10 3.5" stroke="#04130b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -22,8 +22,28 @@ function Lock() {
 
 export default function Roadmap({ completed, toggleTopic, isUnlocked, pct }) {
   const [open, setOpen] = useState({ foundations: true });
+  const [openTopic, setOpenTopic] = useState(null);
 
   const toggleStage = (id) => setOpen((o) => ({ ...o, [id]: !o[id] }));
+
+  const openLesson = (key, locked) => {
+    if (locked) return;
+    setOpenTopic((cur) => (cur === key ? null : key));
+  };
+
+  // Mark the current topic done, then open the next one so the user keeps moving.
+  const completeTopic = (key) => {
+    toggleTopic(key); // marks it complete (it's unlocked + not done)
+    const i = TOPIC_KEYS.indexOf(key);
+    const nextKey = TOPIC_KEYS[i + 1];
+    if (nextKey) {
+      const nextStage = nextKey.split(".")[0];
+      setOpen((o) => ({ ...o, [nextStage]: true }));
+      setOpenTopic(nextKey);
+    } else {
+      setOpenTopic(null);
+    }
+  };
 
   return (
     <div className="rail">
@@ -60,34 +80,71 @@ export default function Roadmap({ completed, toggleTopic, isUnlocked, pct }) {
                   const key = `${stage.id}.${topic.id}`;
                   const on = !!completed[key];
                   const locked = !on && !isUnlocked(key);
+                  const lessonOpen = openTopic === key;
+                  const status = on ? "done" : locked ? "locked" : "start";
+
                   return (
                     <div
                       key={key}
-                      className={`topic${on ? " done" : ""}${locked ? " locked" : ""}`}
-                      onClick={() => !locked && toggleTopic(key)}
-                      onKeyDown={(e) => {
-                        if (!locked && (e.key === "Enter" || e.key === " ")) {
-                          e.preventDefault();
-                          toggleTopic(key);
-                        }
-                      }}
-                      role="checkbox"
-                      aria-checked={on}
-                      aria-disabled={locked}
-                      title={locked ? "Complete the topic above to unlock this one" : undefined}
-                      tabIndex={locked ? -1 : 0}
+                      className={`topic${on ? " done" : ""}${locked ? " locked" : ""}${
+                        lessonOpen ? " open" : ""
+                      }`}
                     >
-                      <span className={`checkbox${on ? " on" : ""}`}>
-                        {locked ? <Lock /> : <Check />}
-                      </span>
-                      <span className="topic-body">
-                        <span className="topic-name">{topic.name}</span>
-                        <br />
-                        <span className="topic-why">{topic.why}</span>
-                      </span>
-                      <span className={`topic-status${!on && !locked ? " next" : ""}`}>
-                        {on ? "done" : locked ? "locked" : "start"}
-                      </span>
+                      <div
+                        className="topic-head"
+                        onClick={() => openLesson(key, locked)}
+                        onKeyDown={(e) => {
+                          if (!locked && (e.key === "Enter" || e.key === " ")) {
+                            e.preventDefault();
+                            openLesson(key, locked);
+                          }
+                        }}
+                        role="button"
+                        aria-expanded={lessonOpen}
+                        aria-disabled={locked}
+                        title={locked ? "Complete the topic above to unlock this one" : undefined}
+                        tabIndex={locked ? -1 : 0}
+                      >
+                        <span className={`checkbox${on ? " on" : ""}`}>
+                          {locked ? <Lock /> : on ? <Check /> : null}
+                        </span>
+                        <span className="topic-body">
+                          <span className="topic-name">{topic.name}</span>
+                          <br />
+                          <span className="topic-why">{topic.why}</span>
+                        </span>
+                        <span className={`topic-status${status === "start" ? " next" : ""}`}>
+                          {status}
+                        </span>
+                      </div>
+
+                      {lessonOpen && (
+                        <div className="lesson">
+                          <div className="lesson-cmd mono">$ cover {topic.id}</div>
+                          <ul className="lesson-list">
+                            {(topic.learn || []).map((item, i) => (
+                              <li key={i}>{item}</li>
+                            ))}
+                          </ul>
+                          <div className="lesson-foot">
+                            {on ? (
+                              <>
+                                <span className="lesson-done mono">✓ completed</span>
+                                <button
+                                  className="lesson-reset"
+                                  onClick={() => toggleTopic(key)}
+                                >
+                                  mark incomplete
+                                </button>
+                              </>
+                            ) : (
+                              <button className="btn" onClick={() => completeTopic(key)}>
+                                mark as complete
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   );
                 })}
